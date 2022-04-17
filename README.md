@@ -1,4 +1,4 @@
-# app_rating
+# Application Rating Library
 
 Show users an alert asking to rate your app in store. You decide when to ask.
 
