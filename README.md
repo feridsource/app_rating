@@ -2,6 +2,11 @@
 
 Show users an alert asking to rate your app in store. You decide when to ask.
 
+**Sample Code**
+```dart
+  AppRating appRating = AppRating(context);
+  await appRating.initRating();
+
 # Licence
 
 Copyright (C) 2022 Ferid Cafer
