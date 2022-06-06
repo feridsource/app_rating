@@ -6,6 +6,7 @@ Show users an alert asking to rate your app in store. You decide when to ask.
 ```dart
   AppRating appRating = AppRating(context);
   await appRating.initRating();
+```
 
 # Licence
 
