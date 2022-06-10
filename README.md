@@ -1,4 +1,4 @@
-# Application Rating Library
+# Application Rating Library for Flutter
 
 Show users an alert asking to rate your app in store. You decide when to ask.
 
