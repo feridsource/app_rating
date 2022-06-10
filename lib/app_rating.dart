@@ -7,41 +7,51 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppRating {
+  late BuildContext _context; // context
+  late SharedPreferences _prefs; // shared preferences
+  final String _prefViewingNumber = "VIEWING_NUMBER";
 
-  late BuildContext context; // context
-  late var prefs; // shared preferences
-  final String prefViewingNumber = "VIEWING_NUMBER";
-
-  int viewingNumber = 0; // keeps the count of viewing the given page
+  int _viewingNumber = 0; // keeps the count of viewing the given page
   // 0 beginning, -1 never show
 
-  late int frequency; // usage frequency
+  late int _frequency; // usage frequency
   // after so many times of usage the user will be prompted to rate the application
 
-  late String iosAppId; // iOS application ID
-
+  late String _iosAppId; // iOS application ID
 
   /// Default frequency is 30.
-  AppRating(BuildContext context_, {String iosAppId_ = "", int frequency_ = 30}) {
+  AppRating(BuildContext context, {String iosAppId = "", int frequency = 30}) {
     //init params
-    context = context_;
+    _context = context;
 
-    if (frequency_ > 0) {
-      frequency = frequency_;
+    if (frequency > 0) {
+      _frequency = frequency;
     }
 
-    iosAppId = iosAppId_;
+    _iosAppId = iosAppId;
   }
 
-  /// Initialises to prompt the user.
-  void initRating() {
-    //read from preferences
-    _readFromDisk();
+  /// Initialises rating conditions.
+  Future<void> initRating() async {
+    _prefs = await SharedPreferences.getInstance();
+    // read from preferences
+    if (_prefs.containsKey(_prefViewingNumber)) {
+      _viewingNumber = _prefs.getInt(_prefViewingNumber)!;
+    }
+    // if smaller than 0, it will never be shown again
+    if (_viewingNumber >= 0) {
+      _viewingNumber++;
+    }
 
+    _checkConditions();
+  }
+
+  /// Check whether the conditions are fulfilled.
+  void _checkConditions() {
     //if it is not rated yet
-    if (viewingNumber > 0) {
+    if (_viewingNumber > 0) {
       //check frequency
-      if (viewingNumber % frequency == 0) {
+      if (_viewingNumber % _frequency == 0) {
         //prompt user
         _showPopup();
       } else {
@@ -50,56 +60,42 @@ class AppRating {
     }
   }
 
-  /// Reads from shared preferences.
-  Future<void> _readFromDisk() async {
-    prefs = await SharedPreferences.getInstance();
-    if (prefs != null) {
-      viewingNumber = prefs.getInt(prefViewingNumber);
-      // if smaller than 0, it will never be shown again
-      if (viewingNumber >= 0) {
-        viewingNumber++;
-      }
-    }
-  }
-
   /// Saves on shared preferences.
   Future<void> _saveOnDisk() async {
-    if (prefs != null) {
-      await prefs.setInt(prefViewingNumber, viewingNumber);
-    }
+    await _prefs.setInt(_prefViewingNumber, _viewingNumber);
   }
 
   /// Shows a dialog as a pop up.
   void _showPopup() {
     AlertDialog alert = AlertDialog(
-      title: const Text(strings.appRating),
-      content: const Text(strings.rateApp),
+      title: const Text(Strings.appRating),
+      content: const Text(Strings.rateApp),
       actions: <Widget>[
         TextButton(
             onPressed: () {
               //if user does not want to rate yet
               _saveOnDisk();
 
-              Navigator.of(context).pop();
+              Navigator.of(_context).pop();
             },
-            child: const Text(strings.no)),
+            child: const Text(Strings.no)),
         TextButton(
             onPressed: () {
               //if user decides to rate it
               _rateApplication();
               //never prompt again
-              viewingNumber = -1;
+              _viewingNumber = -1;
               //save the situation
               _saveOnDisk();
 
-              Navigator.of(context).pop();
+              Navigator.of(_context).pop();
             },
-            child: const Text(strings.yes)),
+            child: const Text(Strings.yes)),
       ],
     );
 
     showDialog(
-      context: context,
+      context: _context,
       builder: (context) {
         return alert;
       },
@@ -112,7 +108,7 @@ class AppRating {
 
     OpenStore.instance.open(
       androidAppBundleId: packageName,
-      appStoreId: iosAppId,
+      appStoreId: _iosAppId,
     );
   }
 }

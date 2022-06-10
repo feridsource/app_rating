@@ -1,3 +1,3 @@
-## 0.0.1
+## 0.0.5
 
-* TODO: Describe initial release.
+* Easy way to rate your application

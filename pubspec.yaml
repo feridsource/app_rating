@@ -1,7 +1,8 @@
 name: app_rating
 description: Application rating library.
-version: 0.0.1
-homepage:
+version: 0.0.5
+homepage: https://pub.dev/packages/app_rating/
+repository: https://github.com/feridsource/app_rating/
 
 environment:
   sdk: ">=2.15.1 <3.0.0"
