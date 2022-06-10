@@ -1,7 +1,7 @@
 name: app_rating
-description: Application rating library.
-version: 0.0.5
-homepage: https://pub.dev/packages/app_rating/
+description: Application rating library for Flutter. Make users rate your apps.
+version: 0.0.6
+homepage: https://github.com/feridsource/app_rating/
 repository: https://github.com/feridsource/app_rating/
 
 environment:
